@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente de Loja Online</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin: 20px 0;
+        }
+
+        #chat-box {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user, .bot {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user {
+            align-self: flex-end;
+            background-color: #e1ffc7;
+            border: 1px solid #c3e6c7;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+        }
+
+        #question {
+            width: calc(100% - 120px);
+            max-width: 480px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            background-color: #004094;
+        }
+
+        .preformatted-text {
+            white-space: pre-wrap; /* Preserva as quebras de linha e espaços em branco */
+        }
+    </style>
+</head>
+<body>
+    <h1>Assistente de Loja Online</h1>
+    <div id="chat-box"></div>
+    <div style="display: flex; align-items: center;">
+        <input type="text" id="question" placeholder="Faça uma pergunta sobre produtos ou preços" />
+        <button onclick="sendQuestion()">Enviar</button>
+    </div>
+
+    <script>
+        document.getElementById('question').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); 
+                sendQuestion();
+            }
+        });
+
+        async function sendQuestion() {
+            const question = document.getElementById('question').value;
+            if (!question) return;
+
+            addMessage('Você: ' + question, 'user');
+            document.getElementById('question').value = '';
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question }),
+            });
+
+            const data = await response.json();
+            addMessage('Jarvis: ' + data.answer, 'bot');
+        }
+
+        function addMessage(message, className) {
+            const chatBox = document.getElementById('chat-box');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add(className);
+            // Converte quebras de linha (\n) para <br> para HTML
+            messageElement.innerHTML = message.replace(/\n/g, '<br>');
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
