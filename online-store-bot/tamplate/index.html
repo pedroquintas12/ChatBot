@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="/style/style.css">
+</head>
+<body>
+    <h1>Chatbot</h1>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <input type="text" id="user-input" placeholder="Digite sua mensagem" />
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
+
+    <script>
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+        function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            
+            if (!userInput) {
+                alert("Por favor, digite uma mensagem.");
+                return;
+            }
+
+            fetch('http://127.0.0.1:5000/get_response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const messagesDiv = document.getElementById("messages");
+                // Adiciona a mensagem do usuário
+                messagesDiv.innerHTML += `<div class="user-message"><strong>Você:</strong> ${userInput}</div>`;
+                // Adiciona a resposta do bot
+                messagesDiv.innerHTML += `<div class="bot-message"><strong>Bot:</strong> ${data.response}</div>`;
+                // Limpa o campo de entrada
+                document.getElementById("user-input").value = ""; 
+                // Faz o scroll para a última mensagem
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Houve um problema com a requisição:', error);
+            });
+        }
+    </script>
+</body>
+</html>
