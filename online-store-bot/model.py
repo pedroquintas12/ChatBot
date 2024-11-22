@@ -86,12 +86,6 @@ model = make_pipeline(TfidfVectorizer(), MultinomialNB())
 # Treinando o modelo
 model.fit(perguntas_processadas, respostas)
 
-# Função para responder à pergunta
-def responder_pergunta(pergunta):
-    pergunta_processada = preprocess(pergunta)
-    # Usando o modelo para prever a resposta mais adequada
-    return model.predict([pergunta_processada])[0]
-
 # Função para encontrar a pergunta mais similar
 def encontrar_resposta_mais_similar(pergunta_usuario, limiar_similaridade=0.5, resposta_padrao="Desculpe, não entendi a sua pergunta. Pode reformular?"):
     pergunta_usuario_processada = preprocess(pergunta_usuario)

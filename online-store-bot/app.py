@@ -4,11 +4,6 @@ from model import encontrar_resposta_mais_similar
 
 app = Flask(__name__)
 CORS(app)
-# Função de exemplo para processar a mensagem do usuário
-def process_message(user_input):
-    # Aqui você pode usar qualquer lógica para processar a entrada
-    # Vamos responder com uma resposta simples por enquanto
-    return f"Você disse: {user_input}"
 
 @app.route('/get_response', methods=['POST'])
 def get_responser():
